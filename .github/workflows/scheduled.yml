@@ -1,0 +1,33 @@
+name: Scheduled Tasks
+
+on:
+  schedule:
+    # Run link checker weekly (Sundays at 6am EAT / 3am UTC)
+    - cron: '0 3 * * 0'
+
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for broken links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: deliverables/website/*.html
+      - name: Create issue if broken links found
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Broken links detected on website"
+          content-filepath: lychee/out.md
+          labels: bug, automated
+
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run security headers check
+        run: |
+          npx is-website-vulnerable https://malonlabs.com || true

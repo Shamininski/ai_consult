@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "docx": "^9.5.1",
+    "marked": "^17.0.1",
+    "pdf-lib": "^1.17.1",
+    "pptxgenjs": "^4.0.1",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

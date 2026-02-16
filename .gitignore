@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.venv/
+
+# Node
+.nvmrc
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# CI/Build artifacts
+.lighthouseci/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Deprecated/reference files
+docs_nzee/
+dont_use_setup.sh
+
+# Environment/secrets
+.env
+.env.*

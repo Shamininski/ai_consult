@@ -1,0 +1,172 @@
+name: CI — Build, Test & Deploy
+
+on:
+  push:
+    branches: [main, staging, dev]
+  pull_request:
+    branches: [main, staging]
+
+jobs:
+  # ─── LINT & VALIDATE ───
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate HTML
+        uses: nicferrier/validate-html-action@v1
+        with:
+          files: deliverables/website/*.html
+
+      - name: Lint CSS (Stylelint)
+        run: |
+          npx stylelint "deliverables/website/**/*.css" --fix || true
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: deliverables/website/*.html
+          fail: false
+
+  # ─── PERFORMANCE AUDIT ───
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Run Lighthouse
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun --config=.lighthouserc.json || true
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci/
+
+  # ─── BUILD DOCUMENTS ───
+  build-docs:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          npm install -g docx pptxgenjs tsx
+          pip install python-docx python-pptx openpyxl Pillow reportlab
+
+      - name: Build DOCX deliverables
+        run: |
+          for script in scripts/build-*.js scripts/build-*.ts; do
+            [ -f "$script" ] && npx tsx "$script"
+          done
+
+      - name: Upload deliverables
+        uses: actions/upload-artifact@v4
+        with:
+          name: deliverables
+          path: deliverables/
+
+  # ─── GENERATE PROJECT DOCS ───
+  generate-docs:
+    runs-on: ubuntu-latest
+    needs: lint
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate docs
+        run: |
+          chmod +x scripts/generate-docs.sh
+          ./scripts/generate-docs.sh
+
+      - name: Auto-commit generated docs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update STATUS.md and GUIDE.md"
+          file_pattern: "docs/STATUS.md docs/GUIDE.md"
+
+  # ─── DEPLOY TO STAGING ───
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [lint, lighthouse]
+    if: github.ref == 'refs/heads/staging'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to staging
+        # Option A: GitHub Pages (free)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: deliverables/website
+          destination_dir: staging
+
+        # Option B: Deploy to VPS via SSH (uncomment if using VPS)
+        # - name: Deploy via SSH
+        #   uses: appleboy/ssh-action@v1
+        #   with:
+        #     host: ${{ secrets.STAGING_HOST }}
+        #     username: ${{ secrets.STAGING_USER }}
+        #     key: ${{ secrets.STAGING_SSH_KEY }}
+        #     script: |
+        #       cd /var/www/staging.malonlabs.com
+        #       git pull origin staging
+        #       # Restart if needed
+
+  # ─── DEPLOY TO PRODUCTION ───
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [lint, lighthouse, build-docs]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to production
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: deliverables/website
+          cname: malonlabs.com  # Your domain
+
+        # Option B: Deploy to VPS via SSH (uncomment if using VPS)
+        # - name: Deploy via SSH
+        #   uses: appleboy/ssh-action@v1
+        #   with:
+        #     host: ${{ secrets.PRODUCTION_HOST }}
+        #     username: ${{ secrets.PRODUCTION_USER }}
+        #     key: ${{ secrets.PRODUCTION_SSH_KEY }}
+        #     script: |
+        #       cd /var/www/malonlabs.com
+        #       git pull origin main
+        #       sudo systemctl reload nginx
