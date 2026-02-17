@@ -81,6 +81,7 @@ Each service line can use a subtle accent to differentiate while staying within 
 
 | Element | Font | Weight | Size |
 | --------- | ------ | -------- | ------ |
+| Company Name / Logo Text | Viga | 400 (Regular) | Per context |
 | Display / Hero | Poppins | 700 (Bold) | 48-64px |
 | Headings | Poppins | 600 (SemiBold) | 24-36px |
 | Body | Inter or system sans-serif | 400 (Regular) | 16-18px |
@@ -91,6 +92,7 @@ Each service line can use a subtle accent to differentiate while staying within 
 
 | Element | Font | Weight | Size |
 | --------- | ------ | -------- | ------ |
+| Company Name | Viga Regular | 36-44pt |
 | Title | Calibri | Bold | 28pt |
 | Heading 1 | Calibri | Bold | 18pt |
 | Heading 2 | Calibri | Bold | 14pt |
@@ -101,10 +103,19 @@ Each service line can use a subtle accent to differentiate while staying within 
 
 | Element | Font | Size |
 | --------- | ------ | ------ |
+| Company Name | Viga Regular | 36-44pt |
 | Slide Title | Poppins Bold | 36-44pt |
 | Subtitle | Poppins SemiBold | 20-24pt |
 | Body | Calibri | 16-18pt |
 | Caption/Source | Calibri | 10-12pt |
+
+### Font Rules — Critical
+
+- **"malonlabs" / "Malon Labs" must ALWAYS use the Viga font** — on the website, presentations, proposals, pitch decks, and any branded material. No exceptions.
+- Load Viga from Google Fonts: `https://fonts.googleapis.com/css2?family=Viga&display=swap`
+- The word "CONSULTING" in the consulting sub-brand also uses Viga.
+- Viga is ONLY for the company name and logo text — never for body copy or headings.
+- If Viga is unavailable (e.g., plain text email), use the closest fallback: Arial Black or Impact.
 
 ## Tone of Voice
 

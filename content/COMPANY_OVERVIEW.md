@@ -47,8 +47,8 @@ Most technology companies in Tanzania fall into one of two categories: small fre
 - Legal & Professional Services
 
 ## Company Details
-- **Registered Name:** Malon Labs Ltd
+- **Registered Name:** Malon Labs Limited
 - **Country:** Tanzania
-- **Contact:** [To be added]
-- **Email:** [To be added]
-- **Website:** [To be added]
+- **Contact:** [+255 766 629 933]
+- **Email:** [info@malonlabs.com]
+- **Website:** [https://malonlabs.com]

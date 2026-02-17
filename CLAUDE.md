@@ -14,7 +14,7 @@ This project contains all deliverables for **Malon Labs Ltd**, a Tanzanian techn
 
 ### Service Lines
 
-1. **Software & App Development** — Custom software, mobile apps (Flutter, native), web applications, APIs, and system integrations for businesses across East Africa.
+1. **Software & App Development** — Custom software, blockchain apps, mobile apps, web apps, APIs, and system integrations for businesses across East Africa.
 
 2. **Managed IT Services** — Ongoing IT support, infrastructure management, network administration, cybersecurity, cloud migration, and helpdesk services for organizations that want reliable technology without building an in-house IT team.
 
