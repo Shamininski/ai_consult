@@ -17,6 +17,7 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+.~lock.*
 
 # IDE
 .vscode/
